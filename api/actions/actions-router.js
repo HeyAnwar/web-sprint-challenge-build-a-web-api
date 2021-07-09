@@ -34,5 +34,78 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+router.post('/actions', async (req, res) => {
+    const body = req.body
+    if (!body.project_id || !body.description || !body.notes) {
+        res.status(400).json({
+            message: 'fill in required fields'
+        })
+    } else {
+        try {
+            const action = await Actions.insert(body)
+            res.status(201).json(action)
+        }
+        catch (err) {
+            res.status(500).json({
+                message: 'Invalid request'
+            })
+        }
+    }
+})
+
+// router.post('/actions', (req, res, next) => {
+//     Actions.insert({ action: req.action })
+//     .then(newAction => {
+//         res.status(201).json(newAction)
+//     })
+//     .catch(next)
+// })
+
+router.put('/:id', async (req, res) => {
+    const id = req.params.id
+    const body = req.body
+
+    if (!body.description && !body.notes) {
+        res.status(400).json({
+            message: 'fill in required fields'
+        })
+    } else {
+        try {
+            const action = await Actions.update(id, body)
+            if (!action) {
+                res.status(404).json({
+                    message: 'action does not exist'
+                })
+            } else {
+                res.status(200).json(action)
+            }
+        }
+        catch (err) {
+            res.status(500).json({
+                message: 'Invalid request'
+            })
+        }
+    }
+})
+
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id
+    try {
+        const action = await Actions.remove(id)
+        if (!action) {
+            res.status(404).json({
+                message: 'Invalid action'
+            })
+        } else {
+            res.status(200).json(action)
+        }
+    }
+    catch (err) {
+        res.status(500).json({
+            message: 'Invalid request'
+        })
+    }
+
+})
 
 module.exports = router
