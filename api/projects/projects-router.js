@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.post('/projects',validateProject, async (req, res) => {
+router.post('/',validateProject, async (req, res) => {
     const body = req.body
     if (!body.name && !body.description) {
         res.status(400).json({
@@ -44,7 +44,7 @@ router.post('/projects',validateProject, async (req, res) => {
         })
     } else {
         try {
-            const project = await Projects.insert(body)
+            const {project} = await Projects.insert(body)
             res.status(201).json(project)
         }
         catch (err) {
